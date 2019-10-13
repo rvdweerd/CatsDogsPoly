@@ -21,72 +21,49 @@ public:
 		}
 		std::cout << "-----------\n";
 	}
-	void BuyCats(int n)
+	void BuyPets(Pet::Species animal, int n)
 	{
 		for (int i = 0; i < n; i++)
 		{
-			pets.emplace_back(new Cat());
+			Pet* pNewPet = nullptr;
+			switch (animal)
+			{
+			case Pet::Species::cats:
+				pNewPet = new Cat;
+				break;
+			case Pet::Species::dogs:
+				pNewPet = new Dog;
+				break;
+			case Pet::Species::rabbits:
+				pNewPet = new Rabbit;
+				break;
+			}
+			pets.emplace_back( pNewPet );
 		}
-	}
-	void BuyDogs(int n)
-	{
-		for (int i = 0; i < n; i++)
-		{
-			pets.emplace_back(new Dog);
-		}
+		std::cout << "The Simpsons bought " << n << " " << Pet::SpeciesName(animal) << "s.\n";
+
 	}
 	void MinglePets()
 	{
-		std::cout << "Let them mingle\n";
+		if (pets.size() > 0)
+		{
+			std::cout << "Let them mingle\n";
+		}
+		else
+		{
+			std::cout << "No pets left to mingle\n";
+		}
 		std::random_shuffle(pets.begin(), pets.end());
 	}
-	void ReleaseAllCats()
+	void ReleasePets(const Pet::Species animal)
 	{
-		std::cout << "Let the cats loose\n";
-		auto endIt = std::remove_if(pets.begin(), pets.end(), [](Pet* p)->bool 
-			{
-				std::string type = p->GetType();
-				if ( type == "cats")
-				{
-					std::cout << "one cat ran off\n";
-					delete p;
-					p = nullptr;
-				}
-				
-				return (type == "cats"); 
-			});
-		pets.erase( endIt , pets.end());
-		std::cout << "all cats ran\n";
-		std::cout << "-----------\n";
-	}
-	void ReleaseAllDogs()
-	{
-		std::cout << "Let the dogs loose\n";
-		auto endIt = std::remove_if(pets.begin(), pets.end(), [](Pet* p)->bool
-			{
-				std::string type = p->GetType();
-				if (type == "dogs")
-				{
-					std::cout << "one dog ran off\n";
-					delete p;
-					p = nullptr;
-				}
-
-				return (type == "dogs");
-			});
-		pets.erase(endIt, pets.end());
-		std::cout << "all dogs ran\n";
-		std::cout << "-----------\n";
-	} 
-	void Release(const std::string animal)
-	{
-		std::cout << "Let the "<<animal<<"s loose\n";
+		std::cout << "Let the "<<Pet::SpeciesName(animal)<<"s loose\n";
 		auto endIt = std::remove_if(pets.begin(), pets.end(), [&animal](Pet* p)->bool
 			{
-				std::string animalType = p->GetType();
+				Pet::Species animalType = p->GetType();
 				if (animalType == animal)
 				{
-					std::cout << "one dog ran off\n";
+					std::cout << "one " << Pet::SpeciesName(animal) << " ran off\n";
 					delete p;
 					p = nullptr;
 				}
@@ -94,7 +71,7 @@ public:
 				return (animalType == animal);
 			});
 		pets.erase(endIt, pets.end());
-		std::cout << "all " << animal << "s ran\n";
+		std::cout << "all " << Pet::SpeciesName(animal) << "s ran\n";
 		std::cout << "-----------\n";
 	}
 private:
@@ -104,18 +81,26 @@ private:
 int main()
 {
 	Household TheSimpsons;
-	TheSimpsons.BuyCats(3);
-	TheSimpsons.BuyDogs(4);
-	
-	TheSimpsons.PokePets();
+	TheSimpsons.BuyPets(Pet::Species::cats, 5);
+	TheSimpsons.BuyPets(Pet::Species::dogs, 3);
+	TheSimpsons.BuyPets(Pet::Species::rabbits, 2);
+
 	TheSimpsons.MinglePets();
 	TheSimpsons.PokePets();
 	
-	//TheSimpsons.Release("dogs");
-	TheSimpsons.ReleaseAllCats();
-	//TheSimpsons.ReleaseAllDogs();
+	TheSimpsons.ReleasePets(Pet::Species::cats);
+	TheSimpsons.MinglePets();
 	TheSimpsons.PokePets();
-	
+
+	TheSimpsons.ReleasePets(Pet::Species::rabbits);
+	TheSimpsons.MinglePets();
+	TheSimpsons.PokePets();
+
+	TheSimpsons.ReleasePets(Pet::Species::dogs);
+	TheSimpsons.MinglePets();
+	TheSimpsons.PokePets();
+
+
 	while (!_kbhit());
 	return 0;
 }

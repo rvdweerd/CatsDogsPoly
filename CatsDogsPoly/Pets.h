@@ -5,17 +5,43 @@
 class Pet
 {
 public:
+	enum class Species
+	{
+		cats = 0 ,
+		dogs,
+		rabbits,
+		nTypes
+	};
+	static std::string SpeciesName(Species spec)
+	{
+		switch (spec)
+		{
+		case Species::cats :
+			return "cat";
+			break;
+		case Species::dogs:
+			return "dog";
+			break;
+		case Species::rabbits:
+			return "rabbit";
+			break;
+		}
+		return "";
+	}
+	
+
+public:
 	virtual ~Pet()
 	{}
 	virtual void Poke() const = 0;
-	virtual std::string GetType() const = 0;
+	virtual Species GetType() const = 0;
 protected:
-	Pet(std::string name)
+	Pet(Species type)
 		:
-		name(name)
+		type(type)
 	{}
-private:
-	std::string name;
+//private:
+	Species type;
 };
 
 class Dog : public Pet
@@ -23,19 +49,17 @@ class Dog : public Pet
 public:
 	Dog()
 		:
-		Pet("doggie")
+		Pet(Pet::Species::dogs)
 	{}
 	~Dog() override = default;
 	virtual void Poke() const override
 	{
 		std::cout << "Woof\n";
 	}
-	virtual std::string GetType() const override
+	virtual Species GetType() const override
 	{
 		return type;
 	}
-private:
-	std::string type = "dogs";
 };
 
 class Cat : public Pet
@@ -43,17 +67,33 @@ class Cat : public Pet
 public:
 	Cat()
 		:
-		Pet("kitty")
+		Pet(Pet::Species::cats)
 	{}
 	~Cat() override = default;
 	virtual void Poke() const override
 	{
 		std::cout << "Miauw\n";
 	}
-	virtual std::string GetType() const override
+	virtual Species GetType() const override
 	{
 		return type;
 	}
-private:
-	std::string type = "cats";
+};
+
+class Rabbit : public Pet
+{
+public:
+	Rabbit()
+		:
+		Pet(Pet::Species::rabbits)
+	{}
+	~Rabbit() override = default;
+	virtual void Poke() const override
+	{
+		std::cout << "Jump\n";
+	}
+	virtual Species GetType() const override
+	{
+		return type;
+	}
 };
